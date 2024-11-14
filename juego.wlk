@@ -1,103 +1,56 @@
 import wollok.game.*
+import config.*
 
 object juego {
+    const property enemigos = []
     method iniciar() {
+        
+
 
         game.width(37.33)
         game.height(20.66)
-        game.boardGround("stage.png")
-        game.addVisualCharacter(aprendiz)
-        game.onCollideDo(aprendiz, {obstaculo => obstaculo.colisionasteConAprenzdiz()})
-        game.schedule(20000, {game.removeTickEvent("muestra obstaculo")})
+        game.boardGround("escenario.png")
+        game.addVisual(jugador)
+        
+        game.onTick(10000, "Agregar enemigo", self.sumarEnemigoALaLista())
+        game.on
+        
+        
 
-        self.generarObstaculos()
-        self.generarItems()
+        // game.onCollideDo(jugador, {obstaculo => enemigoFinal.colisionasteConJugador()})
+        game.addVisual(enemigoFinal)
     }
-    method generarObstaculos() {
-        game.onTick(1000, "muestra obstaculo", {new Obstaculo().mostrar()})
+    method sumarEnemigoALaLista() {
+            if (enemigos.size() < 5) 
+                enemigos.add(new enemigoFinal(position = game.at(0.randomUp(game.width()-1), 1)))
+            else
+                game.removeTickEvent("Agregar enemigo")
     }
-    method generarItems() {
-        game.schedule(500, {self.generarItem()})
-    }
-    method generarItem() {
-        const pos = self.posicionAleatoria()
-        const item = new Item(position = pos)
-        game.addVisual(item)
-    }
-    method posicionAleatoria() = game.at(0.randomUpTo(game.width()), 0.randomUpTo(game.height()))
-    // method generarFinalBoss() {
-    //     game.
-    // }
-
 }
 
-class Obstaculo{
+class Enemigo{
     var position = null
 
-    method colisionasteConAprenzdiz(){
-         aprendiz.recibirDanio()
-    }
-    method mostrar() {
+    method initialize(){
         position = juego.posicionAleatoria()
         game.addVisual(self)
-        self.moverseAleatoriamente()
     }
-    method moverseAleatoriamente(){}
-    method position() = position
-    method image() = "obstaculo.png"
+    method image()
 }
-// class Obstaculo {
-//     const property position
-//     method colisionasteConAprenzdiz(){
-//         aprendiz.recibirDanio()
-//     }
-// }
 
- class Item {
-    var image = "item.png"
-    const position
+class enemigoFinal inherits Enemigo  {
+    var vida = 400
 
-    method colisionasteConAprenzdiz(){
-         aprendiz.recibirBeneficio()
-    }
-    method image() = image
-    method position() = position 
- }
+    override method image( ) = "finalBossP1Izq.png"
+}
 
-// class Personaje {
-//     const property especialidad 
-//     var property vida
-//     var nivel = 1
 
-//     method recibirDanio() {
-//         if (nivel == 1) {
-//             vida = 0.max(vida - 1)
-//         }else {
-//             nivel = nivel - 1
-//         }
-//     }
-// }
-
-// class Caballero {
-  
-// }
-
-// class Arquero {
-  
-// }
-
-// class Mago {
-
-// }
-
-object aprendiz {
+object jugador {
     var property position = game.center()
 
-    method image() = "aprendiz.png" 
+    method image() = "jugador.png" 
     method position() = position
     method position (nueva) {
         position = nueva
     }
-    method recibirDanio() {}
-    method recibirBeneficio(){}
 }
