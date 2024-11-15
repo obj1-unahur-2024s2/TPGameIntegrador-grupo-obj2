@@ -1,56 +1,28 @@
 import wollok.game.*
 import config.*
+import Elementos.*
 
 object juego {
-    const property enemigos = []
     method iniciar() {
-        
-
-
         game.width(37.33)
         game.height(20.66)
-        game.boardGround("escenario.png")
+        game.boardGround("escenariook.png")
         game.addVisual(jugador)
-        
-        game.onTick(10000, "Agregar enemigo", self.sumarEnemigoALaLista())
-        game.on
-        
-        
-
-        // game.onCollideDo(jugador, {obstaculo => enemigoFinal.colisionasteConJugador()})
-        game.addVisual(enemigoFinal)
-    }
-    method sumarEnemigoALaLista() {
-            if (enemigos.size() < 5) 
-                enemigos.add(new enemigoFinal(position = game.at(0.randomUp(game.width()-1), 1)))
-            else
-                game.removeTickEvent("Agregar enemigo")
+        // game.addVisual(new EnemigoComunHelado(position = game.at(5,1)))
+        game.addVisual(boton)
+        game.addVisual(puerta)
+        game.addVisual(new EnemigoComunHelado(position = game.at(10, 8)))
+        config.movimientoParaElJugador()
     }
 }
 
-class Enemigo{
-    var position = null
-
-    method initialize(){
-        position = juego.posicionAleatoria()
-        game.addVisual(self)
+object config{
+    method movimientoParaElJugador(){
+        keyboard.a().onPressDo({if(jugador.position().x() > 0 and !(jugador.estaEnUnaEscalera())) jugador.position(jugador.position().left(1))})
+        keyboard.d().onPressDo({if(jugador.position().x() < game.width() - 3 and !(jugador.estaEnUnaEscalera())) jugador.position(jugador.position().right(1))})
+        keyboard.w().onPressDo({if(jugador.estaEnUnaEscalera()) jugador.position(jugador.position().up(1))})
+        // keyboard.s().onPressDo({alguien.position(alguien.position().down(1))})
+        game.onCollideDo(jugador, {algo => algo.colicionoConElJugador(jugador)})
     }
-    method image()
-}
-
-class enemigoFinal inherits Enemigo  {
-    var vida = 400
-
-    override method image( ) = "finalBossP1Izq.png"
-}
-
-
-object jugador {
-    var property position = game.center()
-
-    method image() = "jugador.png" 
-    method position() = position
-    method position (nueva) {
-        position = nueva
-    }
+    
 }
