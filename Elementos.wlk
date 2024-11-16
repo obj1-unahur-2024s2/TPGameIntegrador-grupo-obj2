@@ -32,8 +32,10 @@ object jugador {
     var nivelActual = nivelDesertico
     var vida = 100
     var damage = 20
+    var image = "jugadorR.png"
+    method image() = image 
+    method image(newImage) {image = newImage}
 
-    method image() = "jugador.png" 
     method position() = position
     method position (newPosition) {position = newPosition}
     method pasarDeNivel(){
@@ -48,16 +50,21 @@ object jugador {
 }
 
 
-object boton {
-    const position = game.at(1,8)
-    method image() = "caja.png"
+object palanca {
+    var apagado = true
+    var property activaciones = 0
+    const position = game.at(0,8)
+    method image() = "palanca" + if(apagado) "Apagada.png" else "Encendida.png"
     method position() = position
-    method colicionoConElJugador(alguien) {alguien.colicionar()}
+    method accionar() {
+            apagado = !apagado
+            activaciones += 1
+        }
 }
 
 object puerta{
-    const position = game.at(game.width() - 1,game.height() - 1)
-    method image() = "puertaCerrada.png"
+    const position = game.at(34,15)
+    method image() = "puertaCerrada2.png"
     method position() = position
 }
 
