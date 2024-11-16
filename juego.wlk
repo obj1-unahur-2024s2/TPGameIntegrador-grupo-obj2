@@ -12,6 +12,10 @@ object juego {
         // game.addVisual(new EnemigoComunHelado(position = game.at(5,1)))
         game.addVisual(palanca)
         game.addVisual(new EnemigoComunHelado(position = game.at(10, 8)))
+        game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
+        game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
+        game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
+        game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
         
         config.teclasDelJugador()
     }
@@ -35,6 +39,10 @@ object config{
                                     jugador.pasarDeNivel()
                                     palanca.accionar()
                                 }})
+        keyboard.space().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.saltar()})
+        keyboard.enter().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.atacar()})
     }
-    
+    method colicionesDelJugador(){
+        game.onCollideDo(jugador, {a => a.colicionar(jugador)})
+    }
 }

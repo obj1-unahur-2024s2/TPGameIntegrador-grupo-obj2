@@ -9,7 +9,7 @@ class Enemigo{
 }
 
 class EnemigoComunDesierto inherits Enemigo{
-    override method image() = "murcielagoIzq.png"
+    override method image() = "escorpionR.png"
 }
 
 class EnemigoComunHelado inherits Enemigo{
@@ -24,15 +24,35 @@ class EnemigoFinal inherits Enemigo  {
     override method image() = "finalBossP1Izq.png"
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////Jugador///////////////////////////////////////////////////////////
 
 
 object jugador {
-    var position = game.at(0,self.nivelActual().spawnCorrecto())
+    var position = game.at(0,self.nivelActual().suelo())
     var nivelActual = nivelDesertico
     var vida = 100
     var damage = 20
     var image = "jugadorR.png"
+    var estrellasRecolectadas = 0
+
+    method estrellasRecolectadas() = estrellasRecolectadas
+    method sumarEstrella() {estrellasRecolectadas += 1}
     method image() = image 
     method image(newImage) {image = newImage}
 
@@ -47,8 +67,35 @@ object jugador {
     method estaParaPasarDeNivel() = self.position().x() == 27 and self.position().y() == nivelActual.positionYMaximaEscalera() 
     method colicionar(){self.pasarDeNivel()}
     method atacar(){}
+    method saltar() {
+        if(self.position().y() == nivelActual.suelo()){
+            self.subir()
+            game.schedule(500,{self.bajar()})
+        }
+    }
+    method subir(){position = position.up(1)}
+    method bajar(){position = position.down(1)}
+    method colisionar(algo){
+        game.removeVisual(algo)
+        estrellasRecolectadas += 1
+    }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////Elementos Variados//////////////////////////////////////////////
 
 object palanca {
     var apagado = true
@@ -57,8 +104,10 @@ object palanca {
     method image() = "palanca" + if(apagado) "Apagada.png" else "Encendida.png"
     method position() = position
     method accionar() {
-            apagado = !apagado
-            activaciones += 1
+            if(jugador.estrellasRecolectadas() == 3){
+                apagado = !apagado
+                activaciones += 1
+            }
         }
 }
 
@@ -68,13 +117,38 @@ object puerta{
     method position() = position
 }
 
+
+class Moneda{
+    var position
+
+    method position() = position
+    method image() = "caja.png"
+    method colisionar(alguien){
+        alguien.colisionar(self)
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////Niveles////////////////////////////////////////////////////
 
 
 object nivelDesertico{
     const property velocidadDeEnemigos = 600
 
-    method spawnCorrecto() = 1
+    method suelo() = 1
     method tipoDeEnemigo() = EnemigoComunDesierto
     method nuevoEnemigo() {new EnemigoComunDesierto(position = game.at(5,1))}
     method positionXEscalera() = 27
@@ -89,10 +163,12 @@ object nivelHelado{
     method positionXEscalera() = 5
     method positionYMaximaEscalera() = 14
     method siguienteNivel() = nivelLunar
+    method suelo() = 8
 }
 object nivelLunar{
     const property velocidadDeEnemigos = 200
     method tipoDeEnemigo() = EnemigoComunLunar
     method nuevoEnemigo() {new EnemigoComunHelado(position = game.at(5,7))}
     method siguienteNivel() {}
+    method suelo() = 15
 }
