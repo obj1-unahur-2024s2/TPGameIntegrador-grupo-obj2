@@ -22,19 +22,34 @@ object config{
         keyboard.a().onPressDo({if(jugador.position().x() > 0 and !(jugador.estaEnUnaEscalera())){
                                     jugador.position(jugador.position().left(1))
                                     jugador.image("jugadorL.png")
+                                    jugador.seMueveHacia(left)
                                     }})
         keyboard.d().onPressDo({if(jugador.position().x() < game.width() - 3 and !(jugador.estaEnUnaEscalera())){
                                      jugador.position(jugador.position().right(1))
                                      jugador.image("jugadorR.png")
+                                     jugador.seMueveHacia(right)
                                      }})
         keyboard.w().onPressDo({if(jugador.estaEnUnaEscalera()) 
                                     jugador.position(jugador.position().up(1))
-                                    jugador.image()
+                                    jugador.image("jugadorUp1.png")
+                                    jugador.seMueveHacia(up)
+                                    })
+        keyboard.s().onPressDo({if(jugador.estaEnUnaEscalera() && jugador.position().y() > 0) 
+                                    jugador.position(jugador.position().down(1))
+                                    jugador.image("jugadorUp2.png")
+                                    jugador.seMueveHacia(down)
                                     })
         keyboard.e().onPressDo({if(jugador.position() == palanca.position() && palanca.activaciones() == 0){ 
                                     jugador.pasarDeNivel()
                                     palanca.accionar()
                                 }})
+        keyboard.r().onPressDo({ 
+                                    jugador.atacar()
+                                    
+                                })
+        keyboard.g().onPressDo({ 
+                                    jugador.position(jugador.position().up(1))
+                                    jugador.image("jugadorJR1.png")
+                                })
     }
-    
 }
