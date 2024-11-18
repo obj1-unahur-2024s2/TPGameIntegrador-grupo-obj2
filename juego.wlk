@@ -1,7 +1,6 @@
 import wollok.game.*
 import config.*
 import Elementos.*
-//9,15,23
 object juego {
     const property enemigosDesierto = [new EnemigoComunDesierto(position = game.at(2.randomUpTo(9),1)),
                               new EnemigoComunDesierto(position = game.at(9.randomUpTo(15),1)),
@@ -46,10 +45,12 @@ object config{
         keyboard.a().onPressDo({if(jugador.position().x() > 0 and !(jugador.estaEnUnaEscalera())){
                                     jugador.position(jugador.position().left(1))
                                     jugador.image("jugadorL.png")
+                                    jugador.lookAt("left")
                                     }})
         keyboard.d().onPressDo({if(jugador.position().x() < game.width() - 3 and !(jugador.estaEnUnaEscalera())){
                                      jugador.position(jugador.position().right(1))
                                      jugador.image("jugadorR.png")
+                                     jugador.lookAt("right")
                                      }})
         keyboard.w().onPressDo({if(jugador.estaEnUnaEscalera()) 
                                     jugador.position(jugador.position().up(1))
@@ -60,7 +61,7 @@ object config{
         //                             palanca.accionar()
         //                         }})
         keyboard.space().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.saltar()})
-        keyboard.enter().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.atacar(jugador.enemigosCorrectosQueAtacar())})
+        keyboard.enter().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.atacar()})
     }
     method colicionesDelJugador(){
         game.onCollideDo(jugador, {a => a.colicionar(jugador)})

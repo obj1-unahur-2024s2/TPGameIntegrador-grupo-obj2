@@ -16,7 +16,7 @@ class EnemigoComunDesierto inherits Enemigo{
 }
 
 class EnemigoComunHelado inherits Enemigo{
-    override method image() = "enemigoDeHielo.png"
+    override method image() = "enemigoDeHieloR.png"
 }
 class EnemigoComunLunar inherits Enemigo{
     override method image() = "enemigoLunar.png"
@@ -33,6 +33,10 @@ object enemigoFinal {
 
     }
     method recibirAtaque(poder){
+        if(vida == 20){
+            vida = 0.max(vida - poder)
+            game.addVisual(llave)
+        }
         vida = 0.max(vida - poder)
     }
 }
@@ -63,6 +67,7 @@ object jugador {
     var damage = 20
     var image = "jugadorR.png"
     var estrellasRecolectadas = 0
+    var property lookAt = "right"
 
     method estrellasRecolectadas() = estrellasRecolectadas
     method sumarEstrella() {estrellasRecolectadas += 1}
@@ -85,9 +90,9 @@ object jugador {
     method saltar() {
         if(self.position().y() == nivelActual.suelo()){
             self.subir()
+            self.cambiarImagenCorrectaDeSalto()
             game.schedule(500,{self.bajar()})
-            game.schedule(250,{self.image("jugadorJR2.png")})
-            game.schedule(550,{self.imagenNormal()})
+            // game.schedule(250,{self.image("jugadorJR2.png")})
         }
     }
     method cambiarImagenCorrectaDeSalto(){
@@ -97,31 +102,76 @@ object jugador {
     method subir(){position = position.up(1)}
     method bajar(){position = position.down(1)}
     
+    //getObjectIn()
     
     method comer(algo) {vida = 100.min(vida + algo.curacion())}
-    method atacar(enemigo){
-        if(self.position().x() - enemigo.position().x() <= 2){  
-            if(self.nivelActual().enemigos().isEmpty() and self.nivelActual() == nivelLunar){
+   
+   
+
+
+
+    // method atacar(enemigo){
+    //     if(self.position().x() - enemigo.position().x() <= 2){  
+    //         self.pelearConJefeFinalSiDebe()
+    //         if(!enemigo.estaMuerto()){
+    //             self.cambiarAImagenCorrecta()
+    //             enemigo.recibirAtaque(damage)
+    //         }
+    //         else{
+    //             nivelActual.enemigos().remove(nivelActual.enemigos().first())
+    //         }
+    //     }
+    // }
+
+    method atacar(){
+        if(lookAt == "right"){
+            if(!game.getObjectsIn(position.right(1)).isEmpty() ){
+                const enemigo = game.getObjectsIn(position.right(1)).first()
+                enemigo.recibirAtaque()
+            }
+            self.cambiarAImagenCorrectaAtaque()
+        }
+        else{
+            if(!game.getObjectsIn(position.left(1)).isEmpty() ){
+                const enemigo = game.getObjectsIn(position.left(1)).first()
+                enemigo.recibirAtaque()
+            }
+            self.cambiarAImagenCorrectaAtaque()
+        }
+    }
+
+
+
+
+
+    method cambiarAImagenCorrectaAtaque(){
+        if(image == "jugadorL.png") image = "jugadorAtaque1L.png" else image = "jugadorAtaque1R.png"
+        game.schedule(300, {if(image == "jugadorAtaque1L.png") image = "jugadorL.png" else image = "jugadorR.png"})
+    }
+
+    method pelearConEnemigoSiHay(enemigo){
+        if(!enemigo.estaMuerto()){
+                self.cambiarAImagenCorrectaAtaque()
+                enemigo.recibirAtaque(damage)
+            }
+            else{
+                nivelActual.enemigos().remove(nivelActual.enemigos().first())
+            }
+    }
+
+    method pelearConJefeFinalSiDebe(){
+        if(self.nivelActual().enemigos().isEmpty() and self.nivelActual() == nivelLunar){
                 if(enemigoFinal.vida() == 20){
-                    self.cambiarAImagenCorrecta()
+                    self.cambiarAImagenCorrectaAtaque()
                     enemigoFinal.recibirAtaque(damage)
                     game.removeVisual(enemigoFinal)
                     game.addVisual(llave)
                 }
                 else {
-                    self.cambiarAImagenCorrecta()
+                    self.cambiarAImagenCorrectaAtaque()
                     enemigoFinal.recibirAtaque(damage)
                 }
             }
-            else if(!enemigo.estaMuerto()){
-                self.cambiarAImagenCorrecta()
-                enemigo.recibirAtaque(damage)
-            }
-        }
-    }
-    method cambiarAImagenCorrecta(){
-        if(image == "jugadorL.png") image = "jugadorAtaque1L.png" else image = "jugadorAtaque1R.png"
-        game.schedule(300, {if(image == "jugadorAtaque1L.png") image = "jugadorL.png" else image = "jugadorR.png"})
     }
     
     method recibirAtaque(poder) {vida = 0.max(vida - enemigoFinal.damage())}
