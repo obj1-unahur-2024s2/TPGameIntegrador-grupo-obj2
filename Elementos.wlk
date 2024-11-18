@@ -4,23 +4,35 @@ import wollok.game.*
 ////////////////////////////////////////////////////////Enemigos//////////////////////////////////////////////
 class Enemigo{
     var position
+    var vida
+
+    method vida() = vida
     method position() = position
     method image()
-    method estaMuerto() = false
     method colicionar(){}
-    method recibirAtaque(){}
+    method recibirAtaque(){
+        vida = 0.max(vida - jugador.damage())
+        if(self.estaMuerto()){
+            game.removeVisual(self)
+        }
+    }
+    method damage() 
+    method estaMuerto() = vida == 0
 }
 
-class EnemigoComunDesierto inherits Enemigo{
+class EnemigoComunDesierto inherits Enemigo (vida = 40){
     override method image() = "escorpionR.png"
+    override method damage() = 5
 }
 
-class EnemigoComunHelado inherits Enemigo{
+class EnemigoComunHelado inherits Enemigo (vida = 60){
     override method image() = "enemigoDeHieloR.png"
+    override method damage() = 10
 }
-class EnemigoComunLunar inherits Enemigo{
-    override method image() = "enemigoLunar.png"
-}
+// class EnemigoComunLunar inherits Enemigo{
+//     override method image() = "enemigoLunar.png"
+//     override method damage() = 15
+// }
 
 object enemigoFinal {
     var vida = 400
@@ -29,16 +41,17 @@ object enemigoFinal {
     method vida() = vida
     method position() = game.at(20,15)
     method image() = "finalBossP1Izq.png"
-    method atacar(alguien){
+    method atacar(){
 
     }
-    method recibirAtaque(poder){
-        if(vida == 20){
-            vida = 0.max(vida - poder)
+    method recibirAtaque(){
+        vida = 0.max(vida - jugador.damage())
+        if(self.estaMuerto()){
+            game.removeVisual(self)
             game.addVisual(llave)
         }
-        vida = 0.max(vida - poder)
     }
+    method estaMuerto() = vida == 0
 }
 
 
@@ -64,13 +77,14 @@ object jugador {
     var position = game.at(0,self.nivelActual().suelo())
     var nivelActual = nivelDesertico
     var vida = 100
-    var damage = 20
+    const property damage = 20
     var image = "jugadorR.png"
     var estrellasRecolectadas = 0
     var property lookAt = "right"
 
     method estrellasRecolectadas() = estrellasRecolectadas
     method sumarEstrella() {estrellasRecolectadas += 1}
+    method vida() = vida
 
     method image() = image 
     method image(newImage) {image = newImage}
@@ -159,20 +173,20 @@ object jugador {
             }
     }
 
-    method pelearConJefeFinalSiDebe(){
-        if(self.nivelActual().enemigos().isEmpty() and self.nivelActual() == nivelLunar){
-                if(enemigoFinal.vida() == 20){
-                    self.cambiarAImagenCorrectaAtaque()
-                    enemigoFinal.recibirAtaque(damage)
-                    game.removeVisual(enemigoFinal)
-                    game.addVisual(llave)
-                }
-                else {
-                    self.cambiarAImagenCorrectaAtaque()
-                    enemigoFinal.recibirAtaque(damage)
-                }
-            }
-    }
+    // method pelearConJefeFinalSiDebe(){
+    //     if(self.nivelActual().enemigos().isEmpty() and self.nivelActual() == nivelLunar){
+    //             if(enemigoFinal.vida() == 20){
+    //                 self.cambiarAImagenCorrectaAtaque()
+    //                 enemigoFinal.recibirAtaque(damage)
+    //                 game.removeVisual(enemigoFinal)
+    //                 game.addVisual(llave)
+    //             }
+    //             else {
+    //                 self.cambiarAImagenCorrectaAtaque()
+    //                 enemigoFinal.recibirAtaque(damage)
+    //             }
+    //         }
+    // }
     
     method recibirAtaque(poder) {vida = 0.max(vida - enemigoFinal.damage())}
     method enemigosCorrectosQueAtacar(){
@@ -200,12 +214,12 @@ object jugador {
 
 
 object puerta{
-    const position = game.at(34,15)
-    method image() = "puertaCerrada2.png"
+    const position = game.at(32,15)
+    method image() = "portal1.png"
     method position() = position
     method colicionar(alguien){
-        game.say(alguien,"Lo logramos!")
-        game.schedule(1300, {juego.terminar()})
+        // game.say(cartelFinalizacion,"JUEGO TERMINADO")
+        juego.terminar()
     }
 }
 //Cuando golpeamos al boss final podemos validar en cada golpe si la vida del boss es 0, y en el caso de que su vida de 0, haga el addVisual de la llave que abre la puerta.
@@ -247,6 +261,10 @@ object carne{
 }
 
 
+object cartelFinalizacion{
+    method position() = game.center()
+    method image() = if(jugador.vida() == 0) "gameOver.png" else "win.png"
+}
 
 
 
@@ -273,7 +291,7 @@ object nivelDesertico{
 
     method suelo() = 1
     method tipoDeEnemigo() = EnemigoComunDesierto
-    method nuevoEnemigo() {new EnemigoComunDesierto(position = game.at(5,1))}
+    // method nuevoEnemigo() {new EnemigoComunDesierto(position = game.at(5,1))}
     method positionXEscalera() = 27
     method positionYMaximaEscalera() = 7
     method siguienteNivel() = nivelHelado
@@ -285,7 +303,7 @@ object nivelHelado{
                                     new EnemigoComunHelado(position = game.at(10.randomUpTo(7),8))]
 
     method tipoDeEnemigo() = EnemigoComunHelado
-    method nuevoEnemigo() {new EnemigoComunHelado(position = game.at(5,7))}
+    // method nuevoEnemigo() {new EnemigoComunHelado(position = game.at(5,7))}
     method positionXEscalera() = 6
     method positionYMaximaEscalera() = 14
     method siguienteNivel() = nivelLunar
@@ -293,12 +311,12 @@ object nivelHelado{
 }
 object nivelLunar{
     const property velocidadDeEnemigos = 200
-    const property enemigos = [     new EnemigoComunLunar(position = game.at(7.randomUpTo(12),15)),
-                                    new EnemigoComunLunar(position = game.at(12.randomUpTo(18),15)),
-                                    new EnemigoComunLunar(position = game.at(18.randomUpTo(24),15))]
+    // const property enemigos = [     new EnemigoComunLunar(position = game.at(vida = 40,7.randomUpTo(12),15)),
+    //                                 new EnemigoComunLunar(position = game.at(12.randomUpTo(18),15)),
+    //                                 new EnemigoComunLunar(position = game.at(18.randomUpTo(24),15))]
 
-    method tipoDeEnemigo() = EnemigoComunLunar
-    method nuevoEnemigo() {new EnemigoComunHelado(position = game.at(5,7))}
+    method tipoDeEnemigo() {}
+    method nuevoEnemigo() {}
     method siguienteNivel() {}
     method suelo() = 15
     method positionXEscalera() = 6
