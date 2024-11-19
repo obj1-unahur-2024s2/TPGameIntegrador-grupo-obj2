@@ -1,16 +1,9 @@
 import wollok.game.*
-import config.*
-import Elementos.*
+import player.*
+import niveles.*
+import enemigos.*
+import objetosRandom.*
 object juego {
-    // const property enemigosDesierto = [new EnemigoComunDesierto(position = game.at(2.randomUpTo(9),1)),
-    //                           new EnemigoComunDesierto(position = game.at(9.randomUpTo(15),1)),
-    //                           new EnemigoComunDesierto(position = game.at(15.randomUpTo(23),1))]
-    // const property enemigosHelados = [new EnemigoComunHelado(position = game.at(24.randomUpTo(17),8)),
-    //                           new EnemigoComunHelado(position = game.at(17.randomUpTo(9),8)),
-    //                           new EnemigoComunHelado(position = game.at(10.randomUpTo(7),8))]
-    // const property enemigosLunares = [new EnemigoComunLunar(position = game.at(7.randomUpTo(12),15)),
-    //                           new EnemigoComunLunar(position = game.at(12.randomUpTo(18),15)),
-    //                           new EnemigoComunLunar(position = game.at(18.randomUpTo(24),15))]
     method iniciar() {
         game.width(37.33)
         game.height(20.66)
@@ -32,7 +25,10 @@ object juego {
         
         config.teclasDelJugador()
         config.colisionesDelJugador()
-        jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
+        nivelDesertico.spawnearEnemigos()
+        nivelHelado.spawnearEnemigos()
+        // jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
+        // jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
         // enemigosHelados.forEach({a => game.addVisual(a)})
         // enemigosLunares.forEach({a => game.addVisual(a)})
     }
