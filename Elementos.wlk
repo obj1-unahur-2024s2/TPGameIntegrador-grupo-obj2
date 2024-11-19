@@ -247,6 +247,7 @@ object jugador {
     
     method recibirAtaque(poder) {
         vida = 0.max(vida - poder)
+
         if ( vida > 0 && self.lookAt()=="rigth")
             image = "jugadorDR"
         else if(vida > 0 && self.lookAt()=="left" )
@@ -255,7 +256,7 @@ object jugador {
             image = "jugadorMR1"
             self.morir()
         }
-        else {
+        else if(vida == 0 && self.lookAt()=="left") {
             image = "jugadorML1"
             self.morir()
         }
@@ -309,13 +310,22 @@ object puerta{
 }
 //Cuando golpeamos al boss final podemos validar en cada golpe si la vida del boss es 0, y en el caso de que su vida de 0, haga el addVisual de la llave que abre la puerta.
 
-object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave1.png"){
+object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave.png"){
     // const position = game.at(30,15)
 
     method position() = position
     // method image() = "llave1.png"
     method colisionar(alguien){
         game.addVisual(puerta)
+        game.removeVisual(self)
+    }
+}
+
+object oro inherits ItemDeAccion(position = game.at(3, 15), image = "oro.png") {
+    method position() = position
+    
+    method colisionar(alguien){
+        alguien.sumarPuntos()
         game.removeVisual(self)
     }
 }
@@ -350,14 +360,19 @@ object frutoEspacial inherits ItemDeSalud(position = game.at(6,15), image = "fru
 object cartelFinalizacion{
     method position() = game.center()
     method image() {
-        return if(jugador.vida() == 0)
-            "gameOver.png"
+        return if(jugador.vida() > 0)
+            "gameOver1.png"
         else
             "win.png"
     }
 }
 
-
+object stats {
+    method position() = game.at(1, game.height() - 1)
+    method mostrarEstadisticas() {
+        game.say(self, "Jugador: " + jugador.vida())
+    }
+}
 
 
 
