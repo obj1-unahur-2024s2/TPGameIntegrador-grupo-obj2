@@ -19,8 +19,8 @@ object juego {
         game.addVisual(jugador)
         // game.addVisual(palanca)
         game.addVisual(llave)
-        game.addVisual(manzana)
-        game.addVisual(carne)
+        game.addVisual(helado)
+        game.addVisual(frutoEspacial)
         game.addVisual(enemigoFinal)
         game.addVisual(new EnemigoComunHelado(position = game.at(10, 8)))
         // game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
@@ -30,7 +30,7 @@ object juego {
         // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
         
         config.teclasDelJugador()
-        config.colicionesDelJugador()
+        config.colisionesDelJugador()
         jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
         // enemigosHelados.forEach({a => game.addVisual(a)})
         // enemigosLunares.forEach({a => game.addVisual(a)})
@@ -65,8 +65,8 @@ object config{
         keyboard.space().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.saltar()})
         keyboard.enter().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.atacar()})
     }
-    method colicionesDelJugador(){
-        game.onCollideDo(jugador, {a => a.colicionar(jugador)})
+    method colisionesDelJugador(){
+        game.onCollideDo(jugador, {a => a.colisionar(jugador)})
     }
     method musica(){
 

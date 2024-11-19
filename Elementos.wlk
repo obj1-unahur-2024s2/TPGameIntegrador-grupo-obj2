@@ -5,11 +5,14 @@ import wollok.game.*
 class Enemigo{
     var position
     var vida
+    var direccion = 1
+    var property image
 
     method vida() = vida
     method position() = position
-    method image()
-    method colicionar(){}
+    method colisionar(alguien){
+        alguien.recibirAtaque(self.damage())
+    }
     method recibirAtaque(){
         vida = 0.max(vida - jugador.damage())
         if(self.estaMuerto()){
@@ -18,40 +21,95 @@ class Enemigo{
     }
     method damage() 
     method estaMuerto() = vida == 0
+
+
+    method initialize() {
+        game.onTick(300, "enemigo", {self.desplazarse()})
+    }
+    
+    method limiteADerecha() = game.width() - 1
+    method limiteAIzquierda() = self.position().x() == 1
+    method desplazarse() {
+        if(! self.limiteADerecha() && direccion == 1)
+            self.moverDerecha()
+        else if(self.limiteADerecha() && direccion == 1) {
+            direccion = 0
+            self.cambiarOrientacion()
+        }    
+
+        if(! self.limiteAIzquierda() && direccion == 0)
+            self.moverIzquierda()
+        else if(self.limiteAIzquierda() && direccion == 0) {
+            direccion = 1
+            self.cambiarOrientacion()
+        }
+    }
+    method moverDerecha() {
+        position = position.right(1)
+    }
+    method moverIzquierda() {
+        position = position.left(1)
+    }
+    method cambiarOrientacion()
+    // method direccion() = direccion
+   
+    // method mover(unaDireccion) {
+    //     unaDireccion.movimiento()
+    // }
+        
 }
 
-class EnemigoComunDesierto inherits Enemigo (vida = 40){
-    override method image() = "escorpionR.png"
+// object right {
+//     method movimiento() {
+//         Enemigo.position().right(1) 
+//     } 
+// }
+// object left {
+//     method movimiento() {
+//         Enemigo.position().left(1)
+//     }  
+// }
+
+class EnemigoComunDesierto inherits Enemigo (vida = 40, image = "escorpionR.png"){
+    // override method image() = "escorpionR.png"
     override method damage() = 5
+    override method limiteADerecha() = self.position().x() > game.width() - 3
+    override method limiteAIzquierda() = self.position().x() < 1
+    override method cambiarOrientacion() {
+        if (image == "escorpionR.png")
+            image = "escorpionL.png"
+        else
+            image = "escorpionR.png"
+    }
 }
 
-class EnemigoComunHelado inherits Enemigo (vida = 60){
-    override method image() = "enemigoDeHieloR.png"
+class EnemigoComunHelado inherits Enemigo (vida = 60, image = "enemigoDeHieloR.png"){
+    // override method image() = "enemigoDeHieloR.png"
     override method damage() = 10
+    override method limiteADerecha() = self.position().x() == 20
+    override method limiteAIzquierda() = self.position().x() == 1
+    override method cambiarOrientacion() {
+        if (image == "enemigoDeHieloL.png")
+            image = "enemigoDeHieloR.png"
+        else
+            image = "enemigoDeHieloL.png"
+    }
 }
 // class EnemigoComunLunar inherits Enemigo{
 //     override method image() = "enemigoLunar.png"
 //     override method damage() = 15
 // }
 
-object enemigoFinal {
-    var vida = 400
-    const property damage = 30
-
-    method vida() = vida
-    method position() = game.at(20,15)
-    method image() = "finalBossP1Izq.png"
-    method atacar(){
-
+object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 400, image = "finalBossR.png")  {
+    override method damage() = 30
+    override method limiteADerecha() = self.position().x() == 22
+    override method limiteAIzquierda() = self.position().x() == 8
+    override method cambiarOrientacion() {
+        if (image == "finalBossR.png")
+            image = "finalBossL.png"
+        else
+            image = "finalBossR.png"
     }
-    method recibirAtaque(){
-        vida = 0.max(vida - jugador.damage())
-        if(self.estaMuerto()){
-            game.removeVisual(self)
-            game.addVisual(llave)
-        }
-    }
-    method estaMuerto() = vida == 0
 }
 
 
@@ -120,9 +178,8 @@ object jugador {
     
     method comer(algo) {vida = 100.min(vida + algo.curacion())}
    
-   
 
-
+    method colisionar(algo) {}
 
     // method atacar(enemigo){
     //     if(self.position().x() - enemigo.position().x() <= 2){  
@@ -188,7 +245,25 @@ object jugador {
     //         }
     // }
     
-    method recibirAtaque(poder) {vida = 0.max(vida - enemigoFinal.damage())}
+    method recibirAtaque(poder) {
+        vida = 0.max(vida - poder)
+        if ( vida > 0 && self.lookAt()=="rigth")
+            image = "jugadorDR"
+        else if(vida > 0 && self.lookAt()=="left" )
+            image = "jugadorDR"
+        else if(vida == 0 && self.lookAt()=="rigth"){
+            image = "jugadorMR1"
+            self.morir()
+        }
+        else {
+            image = "jugadorML1"
+            self.morir()
+        }
+    }
+    method morir() {
+        juego.terminar()
+    } 
+    // method recibirAtaque(poder) {vida = 0.max(vida - enemigoFinal.damage())}
     method enemigosCorrectosQueAtacar(){
         return nivelActual.enemigos().first()
     }
@@ -212,48 +287,59 @@ object jugador {
 
 ////////////////////////////Elementos Variados//////////////////////////////////////////////
 
+class ItemDeSalud {
+    const property position
+    const property image 
+    method curacion()
+}
+
+class ItemDeAccion {
+    const position
+    const property image 
+}
 
 object puerta{
     const position = game.at(32,15)
     method image() = "portal1.png"
     method position() = position
-    method colicionar(alguien){
+    method colisionar(alguien){
         // game.say(cartelFinalizacion,"JUEGO TERMINADO")
         juego.terminar()
     }
 }
 //Cuando golpeamos al boss final podemos validar en cada golpe si la vida del boss es 0, y en el caso de que su vida de 0, haga el addVisual de la llave que abre la puerta.
 
-object llave{
-    const position = game.at(30,15)
+object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave1.png"){
+    // const position = game.at(30,15)
 
     method position() = position
-    method image() = "llave1.png"
-    method colicionar(alguien){
+    // method image() = "llave1.png"
+    method colisionar(alguien){
         game.addVisual(puerta)
         game.removeVisual(self)
     }
 }
 
 
-object manzana{
-    const property position = game.at(27,8)
-    const property curacion = 20
+object helado inherits ItemDeSalud (position = game.at(27,8), image = "helado.png") {
+    // const property position = game.at(27,8)
+    // const property curacion = 20
+    override method curacion() = 20
 
-    method image() = "manzana1.png"
-    method colicionar(alguien){
+    // method image() = "manzana1.png"
+    method colisionar(alguien){
         alguien.comer(self)
         alguien.pasarDeNivel()
         game.removeVisual(self)
     }
 }
 
-object carne{
-    const property position = game.at(6,15)
-    const property curacion = 20
-
-    method image() = "frutaEspacial.png"
-    method colicionar(alguien){
+object frutoEspacial inherits ItemDeSalud(position = game.at(6,15), image = "frutaEspacial.png"){
+    // const property position = game.at(6,15)
+    // const property curacion = 20
+     override method curacion() = 50
+    // method image() = "frutaEspacial.png"
+    method colisionar(alguien){
         alguien.comer(self)
         alguien.pasarDeNivel()
         game.removeVisual(self)
@@ -263,7 +349,12 @@ object carne{
 
 object cartelFinalizacion{
     method position() = game.center()
-    method image() = if(jugador.vida() == 0) "gameOver.png" else "win.png"
+    method image() {
+        return if(jugador.vida() == 0)
+            "gameOver.png"
+        else
+            "win.png"
+    }
 }
 
 
@@ -288,13 +379,17 @@ object nivelDesertico{
     const property enemigos = [     new EnemigoComunDesierto(position = game.at(2.randomUpTo(9),1)),
                                     new EnemigoComunDesierto(position = game.at(9.randomUpTo(15),1)),
                                     new EnemigoComunDesierto(position = game.at(15.randomUpTo(23),1))]
-
+    
+    
     method suelo() = 1
     method tipoDeEnemigo() = EnemigoComunDesierto
     // method nuevoEnemigo() {new EnemigoComunDesierto(position = game.at(5,1))}
     method positionXEscalera() = 27
     method positionYMaximaEscalera() = 7
     method siguienteNivel() = nivelHelado
+    method activarEnemigos() {
+        enemigos.forEach({e => e.moverseAleatoriamente()})
+    }
 }
 object nivelHelado{
     const property velocidadDeEnemigos = 400
