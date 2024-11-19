@@ -24,13 +24,13 @@ class Enemigo{
 
 
     method initialize() {
-        game.onTick(300, "enemigo", {self.desplazarse()})
+        game.onTick(350, "enemigo", {self.desplazarse()})
     }
     
     method limiteADerecha() = game.width() - 1
     method limiteAIzquierda() = self.position().x() == 1
     method desplazarse() {
-        if(! self.limiteADerecha() && direccion == 1)
+        if(!self.limiteADerecha() && direccion == 1)
             self.moverDerecha()
         else if(self.limiteADerecha() && direccion == 1) {
             direccion = 0
@@ -100,7 +100,7 @@ class EnemigoComunHelado inherits Enemigo (vida = 60, image = "enemigoDeHieloR.p
 //     override method damage() = 15
 // }
 
-object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 400, image = "finalBossR.png")  {
+object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 100, image = "finalBossR.png")  {
     var direccionDeAtaque = null
     
     method direccionDeAtaque() = direccionDeAtaque
@@ -171,6 +171,9 @@ class FireBall {
             direccion == 1
         else 
             direccion == 0
+    }
+    method colicionar(alguien){
+        alguien.recibirAtaque(self.damage())
     }
 }
 
@@ -251,15 +254,15 @@ object jugador {
 
     method atacar(){
         if(lookAt == "right"){
-            if(!game.getObjectsIn(position.right(1)).isEmpty() ){
-                const enemigo = game.getObjectsIn(position.right(1)).first()
+            if(!game.getObjectsIn(position.right(2)).isEmpty() ){
+                const enemigo = game.getObjectsIn(position.right(2)).first()
                 enemigo.recibirAtaque()
             }
             self.cambiarAImagenCorrectaAtaque()
         }
         else{
-            if(!game.getObjectsIn(position.left(1)).isEmpty() ){
-                const enemigo = game.getObjectsIn(position.left(1)).first()
+            if(!game.getObjectsIn(position.left(2)).isEmpty() ){
+                const enemigo = game.getObjectsIn(position.left(2)).first()
                 enemigo.recibirAtaque()
             }
             self.cambiarAImagenCorrectaAtaque()
@@ -278,30 +281,6 @@ object jugador {
         game.schedule(300, {if(image == "jugadorAtaque1L.png") image = "jugadorL.png" else image = "jugadorR.png"})
     }
 
-    method pelearConEnemigoSiHay(enemigo){
-        if(!enemigo.estaMuerto()){
-                self.cambiarAImagenCorrectaAtaque()
-                enemigo.recibirAtaque(damage)
-        }
-        else{
-            nivelActual.enemigos().remove(nivelActual.enemigos().first())
-        }
-    }
-
-    // method pelearConJefeFinalSiDebe(){
-    //     if(self.nivelActual().enemigos().isEmpty() and self.nivelActual() == nivelLunar){
-    //             if(enemigoFinal.vida() == 20){
-    //                 self.cambiarAImagenCorrectaAtaque()
-    //                 enemigoFinal.recibirAtaque(damage)
-    //                 game.removeVisual(enemigoFinal)
-    //                 game.addVisual(llave)
-    //             }
-    //             else {
-    //                 self.cambiarAImagenCorrectaAtaque()
-    //                 enemigoFinal.recibirAtaque(damage)
-    //             }
-    //         }
-    // }
     
     method recibirAtaque(poder) {
         vida = 0.max(vida - poder)

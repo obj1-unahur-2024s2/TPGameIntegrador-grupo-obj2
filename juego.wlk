@@ -23,7 +23,6 @@ object juego {
         game.addVisual(frutoEspacial)
         game.addVisual(oro)
         game.addVisual(enemigoFinal)
-        game.addVisual(new EnemigoComunHelado(position = game.at(10, 8)))
         game.addVisual(new FireBall(direccion = enemigoFinal.direccionDeAtaque()))
         //game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
         // game.addVisual(new EnemigoComunHelado(position = game.at(5,1)))
