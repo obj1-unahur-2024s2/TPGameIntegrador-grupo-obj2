@@ -101,7 +101,22 @@ class EnemigoComunHelado inherits Enemigo (vida = 60, image = "enemigoDeHieloR.p
 // }
 
 object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 400, image = "finalBossR.png")  {
+    var direccionDeAtaque = null
+    
+    method direccionDeAtaque() = direccionDeAtaque
     override method damage() = 30
+    method dirigirAtaque() {
+        if (image == "finalBossR.png")
+            return 1 
+        else
+            return 0
+    }
+    method atacar() {
+        // const ataques = new FireBall()
+        direccionDeAtaque = self.dirigirAtaque()
+        // game.onTick(300, "ataque", new FireBall(direccion = direccionDeAtaque))
+        new FireBall(direccion = self.direccionDeAtaque())
+    }
     override method limiteADerecha() = self.position().x() == 22
     override method limiteAIzquierda() = self.position().x() == 8
     override method cambiarOrientacion() {
@@ -112,12 +127,52 @@ object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 400, ima
     }
 }
 
+// class FireBall inherits Enemigo (vida = 1000, image = "fireball.png") {
+//     // method image() = "fireBall.png"
+//     // override method position() = enemigoFinal.position()
+//     override method damage() = 25
+//     override method limiteADerecha() = self.position().x() == 0
+//     override method limiteAIzquierda() = self.position().x() == game.width()
+// }
 
+class FireBall {
+    var position = enemigoFinal.position()
+    var property direccion
 
+    method image() = "fireBall.png"
+    method position() = position
+    method damage() = 25
+    method limiteADerecha() = self.position().x() == 24
+    method limiteAIzquierda() = self.position().x() == 1
 
+    method initialize() {
+        game.onTick(300, "fireBall", {self.trayectoria()})
+    }
+    method trayectoria() {
+        if(! self.limiteADerecha() )
+            self.moverDerecha()
+        else
+            game.removeVisual(self) 
 
-
-
+        if(! self.limiteAIzquierda())
+            self.moverIzquierda()
+        else {
+            game.removeVisual(self)
+        }
+    }
+     method moverDerecha() {
+        position = position.right(1)
+    }
+    method moverIzquierda() {
+        position = position.left(1)
+    }
+    method cambiarOrientacion() {
+        if (enemigoFinal.image() == "finalBossR.png")
+            direccion == 1
+        else 
+            direccion == 0
+    }
+}
 
 
 
@@ -137,11 +192,12 @@ object jugador {
     var vida = 100
     const property damage = 20
     var image = "jugadorR.png"
-    var estrellasRecolectadas = 0
+    // var estrellasRecolectadas = 0
+    var puntos = 0
     var property lookAt = "right"
 
-    method estrellasRecolectadas() = estrellasRecolectadas
-    method sumarEstrella() {estrellasRecolectadas += 1}
+    // method estrellasRecolectadas() = estrellasRecolectadas
+    // method sumarEstrella() {estrellasRecolectadas += 1}
     method vida() = vida
 
     method image() = image 
@@ -177,8 +233,7 @@ object jugador {
     //getObjectIn()
     
     method comer(algo) {vida = 100.min(vida + algo.curacion())}
-   
-
+    method sumarPuntos() = puntos + oro.valorQueOtorga()
     method colisionar(algo) {}
 
     // method atacar(enemigo){
@@ -216,7 +271,10 @@ object jugador {
 
 
     method cambiarAImagenCorrectaAtaque(){
-        if(image == "jugadorL.png") image = "jugadorAtaque1L.png" else image = "jugadorAtaque1R.png"
+        if(image == "jugadorL.png") 
+            image = "jugadorAtaque1L.png" 
+        else 
+            image = "jugadorAtaque1R.png"
         game.schedule(300, {if(image == "jugadorAtaque1L.png") image = "jugadorL.png" else image = "jugadorR.png"})
     }
 
@@ -224,10 +282,10 @@ object jugador {
         if(!enemigo.estaMuerto()){
                 self.cambiarAImagenCorrectaAtaque()
                 enemigo.recibirAtaque(damage)
-            }
-            else{
-                nivelActual.enemigos().remove(nivelActual.enemigos().first())
-            }
+        }
+        else{
+            nivelActual.enemigos().remove(nivelActual.enemigos().first())
+        }
     }
 
     // method pelearConJefeFinalSiDebe(){
@@ -248,20 +306,25 @@ object jugador {
     method recibirAtaque(poder) {
         vida = 0.max(vida - poder)
 
-        if ( vida > 0 && self.lookAt()=="rigth")
-            image = "jugadorDR"
-        else if(vida > 0 && self.lookAt()=="left" )
-            image = "jugadorDR"
-        else if(vida == 0 && self.lookAt()=="rigth"){
-            image = "jugadorMR1"
+        if ( vida > 0 && image == "jugadorR.png")
+            image = "jugadorDR.png"
+        else if(vida > 0 && image == "jugadorL.png")
+            image = "jugadorDL.png"
+        else if(vida == 0 && image == "jugadorR.png"){
+            image = "jugadorMR1.png"
             self.morir()
         }
-        else if(vida == 0 && self.lookAt()=="left") {
-            image = "jugadorML1"
+        else if(vida == 0 && image == "jugadorL.png"){
+            image = "jugadorML1.png"
             self.morir()
         }
+        game.schedule(300, {if(image == "jugadorDR.png") image = "jugadorR.png" else image = "jugadorL.png"})
     }
     method morir() {
+        if(self.lookAt()=="rigth")
+            image = "jugadorMR2.png"
+        else
+            image = "jugadorML2.png"
         juego.terminar()
     } 
     // method recibirAtaque(poder) {vida = 0.max(vida - enemigoFinal.damage())}
@@ -323,9 +386,10 @@ object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave.png
 
 object oro inherits ItemDeAccion(position = game.at(3, 15), image = "oro.png") {
     method position() = position
-    
+    method valorQueOtorga() = 1000
     method colisionar(alguien){
         alguien.sumarPuntos()
+        game.removeVisual(self)
         game.removeVisual(self)
     }
 }
@@ -360,7 +424,7 @@ object frutoEspacial inherits ItemDeSalud(position = game.at(6,15), image = "fru
 object cartelFinalizacion{
     method position() = game.center()
     method image() {
-        return if(jugador.vida() > 0)
+        return if(jugador.vida() == 0)
             "gameOver1.png"
         else
             "win.png"
@@ -368,10 +432,15 @@ object cartelFinalizacion{
 }
 
 object stats {
-    method position() = game.at(1, game.height() - 1)
-    method mostrarEstadisticas() {
+    // method position() = game.at(1, game.height() - 1)
+    method position() = game.center()
+    method statsDelJugador() {
         game.say(self, "Jugador: " + jugador.vida())
     }
+    method statsDelBoss() {
+        game.say(self, "Boss: " + enemigoFinal.vida())
+    }
+    method statsEnemigosComunes() {}
 }
 
 
@@ -402,9 +471,9 @@ object nivelDesertico{
     method positionXEscalera() = 27
     method positionYMaximaEscalera() = 7
     method siguienteNivel() = nivelHelado
-    method activarEnemigos() {
-        enemigos.forEach({e => e.moverseAleatoriamente()})
-    }
+    // method activarEnemigos() {
+    //     enemigos.forEach({e => e.moverseAleatoriamente()})
+    // }
 }
 object nivelHelado{
     const property velocidadDeEnemigos = 400
@@ -424,7 +493,7 @@ object nivelLunar{
     // const property enemigos = [     new EnemigoComunLunar(position = game.at(vida = 40,7.randomUpTo(12),15)),
     //                                 new EnemigoComunLunar(position = game.at(12.randomUpTo(18),15)),
     //                                 new EnemigoComunLunar(position = game.at(18.randomUpTo(24),15))]
-
+    
     method tipoDeEnemigo() {}
     method nuevoEnemigo() {}
     method siguienteNivel() {}

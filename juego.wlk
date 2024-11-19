@@ -24,7 +24,8 @@ object juego {
         game.addVisual(oro)
         game.addVisual(enemigoFinal)
         game.addVisual(new EnemigoComunHelado(position = game.at(10, 8)))
-        // game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
+        game.addVisual(new FireBall(direccion = enemigoFinal.direccionDeAtaque()))
+        //game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
         // game.addVisual(new EnemigoComunHelado(position = game.at(5,1)))
         // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
         // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
@@ -37,7 +38,7 @@ object juego {
         // enemigosLunares.forEach({a => game.addVisual(a)})
     }
     method terminar(){
-        game.removeVisual(jugador)
+        // game.removeVisual(jugador)
         game.addVisual(cartelFinalizacion)
         game.stop()
     }
