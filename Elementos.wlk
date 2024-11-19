@@ -114,8 +114,8 @@ object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 100, ima
     method atacar() {
         // const ataques = new FireBall()
         direccionDeAtaque = self.dirigirAtaque()
-        // game.onTick(300, "ataque", new FireBall(direccion = direccionDeAtaque))
-        new FireBall(direccion = self.direccionDeAtaque())
+        game.onTick(300, "ataque", new FireBall(direccion = self.direccionDeAtaque()))
+        // new FireBall(direccion = self.direccionDeAtaque())
     }
     override method limiteADerecha() = self.position().x() == 22
     override method limiteAIzquierda() = self.position().x() == 8
@@ -142,8 +142,8 @@ class FireBall {
     method image() = "fireBall.png"
     method position() = position
     method damage() = 25
-    method limiteADerecha() = self.position().x() == 24
-    method limiteAIzquierda() = self.position().x() == 1
+    method limiteADerecha() = self.position().x() > game.width() - 3
+    method limiteAIzquierda() = self.position().x() < 2
 
     method initialize() {
         game.onTick(300, "fireBall", {self.trayectoria()})
@@ -401,12 +401,12 @@ object frutoEspacial inherits ItemDeSalud(position = game.at(6,15), image = "fru
 
 
 object cartelFinalizacion{
-    method position() = game.center()
+    method position() = game.at(11, 8)
     method image() {
         return if(jugador.vida() == 0)
             "gameOver1.png"
         else
-            "win.png"
+            "win2.png"
     }
 }
 
