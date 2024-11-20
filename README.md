@@ -1,22 +1,35 @@
-# Nombre del juego (<- borrar y completar)
+# NINJA GAME
 
 ## Equipo de desarrollo
 
-- Alguien
-- Persona
-- etc.
+- Lucas Crusvar
+- Felipe Agustin Lopez Acosta
+- Nicolas Guido Roces
+- Agustin Exequiel Fernandes
+- Gil Mariano Nicolas
 
 ## Capturas
 
-(agregar)
+![foto ingame](captura1.png)
+![foto ingame por finalizar](captura2.png)
 
 ## Reglas de Juego / Instrucciones
+El objetivo del juego es derrotar a todos los enemigos que encontremos en el camino, para asi recolectar la mayor cantidad de puntos y poder llegar al portal de salida.
 
-(Escribirlas)
+Enter => Atacar
+
+Space => Saltar
+
+W => Mover Arriba
+
+A => Mover Izquierda
+
+S => Mover Abajo
+
+D => Mover Derecha
 
 
 ## Otros
 
-- Curso/Facultad
-- Versión de wollok
-- Una vez terminado, no tenemos problemas en que el repositorio sea público / queremos manternerlo privado
+- Unahur - Comision 2
+- 0.2.11
