@@ -12,7 +12,7 @@ class ItemDeSalud {
 }
 
 class ItemDeAccion {
-    const position
+    const property position
     const property image 
 }
 
@@ -21,14 +21,12 @@ object portal{
     method image() = "portal1.png"
     method position() = position
     method colisionar(alguien){
-        // game.say(cartelFinalizacion,"JUEGO TERMINADO")
         juego.terminar()
     }
 }
-//Cuando golpeamos al boss final podemos validar en cada golpe si la vida del boss es 0, y en el caso de que su vida de 0, haga el addVisual de la llave que abre la puerta.
+
 
 object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave.png"){
-    method position() = position
     method colisionar(alguien){
         game.addVisual(portal)
         game.removeVisual(self)
@@ -36,7 +34,6 @@ object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave.png
 }
 
 object oro inherits ItemDeAccion(position = game.at(3, 15), image = "oro.png") {
-    method position() = position
     method valorQueOtorga() = 1000
     method colisionar(alguien){
         alguien.sumarPuntos(self.valorQueOtorga())
@@ -47,11 +44,8 @@ object oro inherits ItemDeAccion(position = game.at(3, 15), image = "oro.png") {
 
 
 object helado inherits ItemDeSalud (position = game.at(27,8), image = "helado.png") {
-    // const property position = game.at(27,8)
-    // const property curacion = 20
     override method curacion() = 20
 
-    // method image() = "manzana1.png"
     method colisionar(alguien){
         alguien.comer(self)
         alguien.pasarDeNivel()
@@ -60,10 +54,7 @@ object helado inherits ItemDeSalud (position = game.at(27,8), image = "helado.pn
 }
 
 object frutoEspacial inherits ItemDeSalud(position = game.at(6,15), image = "frutaEspacial.png"){
-    // const property position = game.at(6,15)
-    // const property curacion = 20
-     override method curacion() = 50
-    // method image() = "frutaEspacial.png"
+    override method curacion() = 50
     method colisionar(alguien){
         alguien.comer(self)
         alguien.pasarDeNivel()
@@ -83,7 +74,6 @@ object cartelFinalizacion{
 }
 
 object puntos {
-    // method position() = game.at(1, game.height() - 1)
     method position() = game.at(1,19)
     method statsDelJugador() {
         game.say(self, "Jugador: " + jugador.vida())
@@ -101,4 +91,12 @@ object puntosDeVida {
     method text() = "Vida: " + jugador.vida()
     method textColor() = "FF0000FF"
     method textSize() = 90
+}
+
+object pantallaDeInicio {
+    method position() = game.origin()
+    method image() = "ninjafondo3.png"
+    method interactuar(){
+        game.removeVisual(self)
+    }
 }

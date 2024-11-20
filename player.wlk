@@ -42,8 +42,6 @@ object jugador {
     method subir(){position = position.up(1)}
     method bajar(){position = position.down(1)}
     
-    //getObjectIn()
-    
     method comer(algo) {vida = 100.min(vida + algo.curacion())}
     method sumarPuntos(cantidad) {puntos += cantidad}
     method puntos() = puntos

@@ -4,14 +4,6 @@ import niveles.*
 import enemigos.*
 import objetosRandom.*
 object juego {
-    method pantallaInicial(){
-        game.width(37.33)
-        game.height(20.66)
-        game.boardGround("fondoDeInicio.png")
-        config.teclasDeInicio()
-    }
-
-
     method iniciar() {
         game.width(37.33)
         game.height(20.66)
@@ -23,19 +15,21 @@ object juego {
         game.addVisual(enemigoFinal)
         game.addVisual(puntos)
         game.addVisual(puntosDeVida)
-        
-        config.teclasDelJugador()
-        config.colisionesDelJugador()
         nivelDesertico.spawnearEnemigos()
         nivelHelado.spawnearEnemigos()
+        game.addVisual(pantallaDeInicio)
+
+        config.teclasDelJugador()
+        config.teclasDeInicio()
+        config.colisionesDelJugador()
     }
     method terminar(){
         game.addVisual(cartelFinalizacion)
         game.stop()
     }
 }
-
 object config{
+    var activacionesDeSonido = 0
     method teclasDelJugador(){
         keyboard.a().onPressDo({if(jugador.position().x() > 0 and !(jugador.estaEnUnaEscalera())){
                                     jugador.position(jugador.position().left(1))
@@ -51,20 +45,26 @@ object config{
                                     jugador.position(jugador.position().up(1))
                                     jugador.image("jugadorUp1.png")
                                     })
-        // keyboard.e().onPressDo({if(jugador.position() == palanca.position() && palanca.activaciones() == 0){ 
-        //                             jugador.pasarDeNivel()
-        //                             palanca.accionar()
-        //                         }})
         keyboard.space().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.saltar()})
         keyboard.enter().onPressDo({if(!jugador.estaEnUnaEscalera()) jugador.atacar()})
+        keyboard.enter().onPressDo({if(activacionesDeSonido == 0){ 
+                                        sound.playMusic()
+                                        activacionesDeSonido += 1
+                                    }})
+        
     }
     method colisionesDelJugador(){
         game.onCollideDo(jugador, {a => a.colisionar(jugador)})
     }
-    method musica(){
-
-    }
     method teclasDeInicio(){
-        keyboard.enter().onPressDo({})
+        keyboard.enter().onPressDo({pantallaDeInicio.interactuar()})
+    }
+}
+object sound{
+    const sonido = game.sound("musica1.mp3")
+
+    method playMusic(){
+        sonido.shouldLoop(true)
+        game.schedule(500, {sonido.play()})
     }
 }
