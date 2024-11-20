@@ -12,6 +12,7 @@
 
 ![foto ingame](captura1.png)
 ![foto ingame por finalizar](captura2.png)
+![foto del juego finalizado](captura3.png)
 
 ## Reglas de Juego / Instrucciones
 El objetivo del juego es derrotar a todos los enemigos que encontremos en el camino, para asi recolectar la mayor cantidad de puntos y poder llegar al portal de salida.
