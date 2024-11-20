@@ -4,7 +4,7 @@
 
 - Lucas Crusvar
 - Felipe Agustin Lopez Acosta
-- Nicolas Guido Roces
+- Guido Nicolas Roces
 - Agustin Exequiel Fernandes
 - Gil Mariano Nicolas
 
@@ -24,8 +24,6 @@ Space => Saltar
 W => Mover Arriba
 
 A => Mover Izquierda
-
-S => Mover Abajo
 
 D => Mover Derecha
 
