@@ -16,7 +16,7 @@ class ItemDeAccion {
     const property image 
 }
 
-object puerta{
+object portal{
     const position = game.at(32,15)
     method image() = "portal1.png"
     method position() = position
@@ -28,12 +28,9 @@ object puerta{
 //Cuando golpeamos al boss final podemos validar en cada golpe si la vida del boss es 0, y en el caso de que su vida de 0, haga el addVisual de la llave que abre la puerta.
 
 object llave inherits ItemDeAccion(position = game.at(30,15), image = "llave.png"){
-    // const position = game.at(30,15)
-
     method position() = position
-    // method image() = "llave1.png"
     method colisionar(alguien){
-        game.addVisual(puerta)
+        game.addVisual(portal)
         game.removeVisual(self)
     }
 }
@@ -42,7 +39,7 @@ object oro inherits ItemDeAccion(position = game.at(3, 15), image = "oro.png") {
     method position() = position
     method valorQueOtorga() = 1000
     method colisionar(alguien){
-        alguien.sumarPuntos()
+        alguien.sumarPuntos(self.valorQueOtorga())
         game.removeVisual(self)
         game.removeVisual(self)
     }
@@ -85,9 +82,9 @@ object cartelFinalizacion{
     }
 }
 
-object stats {
+object puntos {
     // method position() = game.at(1, game.height() - 1)
-    method position() = game.center()
+    method position() = game.at(1,19)
     method statsDelJugador() {
         game.say(self, "Jugador: " + jugador.vida())
     }
@@ -96,4 +93,12 @@ object stats {
     }
     method statsEnemigosComunes() {}
     method text() = "Puntos: " + jugador.puntos()
+    method textColor() = "FF0000FF"
+}
+
+object puntosDeVida {
+    method position() = game.at(1,20)
+    method text() = "Vida: " + jugador.vida()
+    method textColor() = "FF0000FF"
+    method textSize() = 90
 }

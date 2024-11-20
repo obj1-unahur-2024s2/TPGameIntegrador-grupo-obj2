@@ -10,7 +10,7 @@ class Enemigo{
     var property image
 
 
-    method cambiarDireccion() {lookAt = "left"}
+    method cambiarADireccion(direccion) {lookAt = direccion}
     method vida() = vida
     method position() = position
     method colisionar(alguien){
@@ -20,14 +20,18 @@ class Enemigo{
         vida = 0.max(vida - jugador.damage())
         if(self.estaMuerto()){
             game.removeVisual(self)
+            self.otorgarPuntos()
+            self.funcionEspecial()
         }
     }
+    method otorgarPuntos()
     method damage() 
     method estaMuerto() = vida == 0
+    method funcionEspecial(){}
 
 
     method initialize() {
-        game.onTick(350, "enemigo", {self.desplazarseADerecha()})
+        game.onTick(350, "enemigo", {self.desplazarse()})
     }
 
     method desplazarse(){
@@ -40,41 +44,26 @@ class Enemigo{
 
     method desplazarseADerecha(){
         if(!self.estaEnLimiteRight()){
+            self.cambiarOrientacion()
             self.moverDerecha()
         }else{
-
+            self.cambiarADireccion("left")
             self.desplazarseAIzquierda()
         }
     }
 
     method desplazarseAIzquierda(){
         if(!self.estaEnLimiteLeft()){
+            self.cambiarOrientacion()
             self.moverIzquierda()
         }else{
+            self.cambiarADireccion("right")
             self.desplazarseADerecha()
         }
     }
 
     method estaEnLimiteLeft()
     method estaEnLimiteRight()
-    
-    // method limiteADerecha() = game.width() - 1
-    // method limiteAIzquierda() = self.position().x() == 1
-    // method desplazarse() {
-    //     if(!self.limiteADerecha() && direccion == 1)
-    //         self.moverDerecha()
-    //     else if(self.limiteADerecha() && direccion == 1) {
-    //         direccion = 0
-    //         self.cambiarOrientacion()
-    //     }    
-
-    //     if(! self.limiteAIzquierda() && direccion == 0)
-    //         self.moverIzquierda()
-    //     else if(self.limiteAIzquierda() && direccion == 0) {
-    //         direccion = 1
-    //         self.cambiarOrientacion()
-    //     }
-    // }
     method moverDerecha() {
         position = position.right(1)
     }
@@ -82,80 +71,48 @@ class Enemigo{
         position = position.left(1)
     }
     method cambiarOrientacion()
-    // method direccion() = direccion
-   
-    // method mover(unaDireccion) {
-    //     unaDireccion.movimiento()
-    // }
-        
 }
 
-// object right {
-//     method movimiento() {
-//         Enemigo.position().right(1) 
-//     } 
-// }
-// object left {
-//     method movimiento() {
-//         Enemigo.position().left(1)
-//     }  
-// }
 
 class EnemigoComunDesierto inherits Enemigo (vida = 40, image = "escorpionR.png"){
-    // override method image() = "escorpionR.png"
     override method damage() = 5
     override method estaEnLimiteLeft() = self.position().x() == 4
-    override method estaEnLimiteRight() = self.position().x() == 10
+    override method estaEnLimiteRight() = self.position().x() == 24
     override method cambiarOrientacion() {
-        if (image == "escorpionR.png")
+        if (lookAt == "left")
             image = "escorpionL.png"
         else
             image = "escorpionR.png"
     }
+    override method otorgarPuntos() { jugador.sumarPuntos(150)}
 }
 
 class EnemigoComunHelado inherits Enemigo (vida = 60, image = "enemigoDeHieloR.png"){
-    // override method image() = "enemigoDeHieloR.png"
     override method damage() = 10
-    override method estaEnLimiteRight() = self.position().x() == 20
+    override method estaEnLimiteRight() = self.position().x() == 24
     override method estaEnLimiteLeft() = self.position().x() == 7
     override method cambiarOrientacion() {
-        if (image == "enemigoDeHieloL.png")
+        if (lookAt == "right")
             image = "enemigoDeHieloR.png"
         else
             image = "enemigoDeHieloL.png"
     }
+    override method otorgarPuntos() {jugador.sumarPuntos(300)}
 }
-// class EnemigoComunLunar inherits Enemigo{
-//     override method image() = "enemigoLunar.png"
-//     override method damage() = 15
-// }
+
 
 object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 100, image = "finalBossR.png")  {
-    var direccionDeAtaque = null
-    
-    method direccionDeAtaque() = direccionDeAtaque
     override method damage() = 30
-    method dirigirAtaque() {
-        if (image == "finalBossR.png")
-            return 1 
-        else
-            return 0
-    }
-    method atacar() {
-        // const ataques = new FireBall()
-        direccionDeAtaque = self.dirigirAtaque()
-        game.onTick(300, "ataque", new FireBall(direccion = self.direccionDeAtaque()))
-        // new FireBall(direccion = self.direccionDeAtaque())
-    }
     override method estaEnLimiteRight() = self.position().x() == 22
     override method estaEnLimiteLeft() = self.position().x() == 8
     override method cambiarOrientacion() {
-        if (image == "finalBossR.png")
+        if (lookAt == "left")
             image = "finalBossL.png"
         else
             image = "finalBossR.png"
     }
+    override method otorgarPuntos() {jugador.sumarPuntos(600)}
+    override method funcionEspecial() {game.addVisual(llave)}
 }
 
 // class FireBall inherits Enemigo (vida = 1000, image = "fireball.png") {
@@ -166,44 +123,44 @@ object enemigoFinal inherits Enemigo (position = game.at(20,15), vida = 100, ima
 //     override method limiteAIzquierda() = self.position().x() == game.width()
 // }
 
-class FireBall {
-    var position = enemigoFinal.position()
-    var property direccion
+// class FireBall {
+//     var position = enemigoFinal.position()
+//     var property direccion
 
-    method image() = "fireBall.png"
-    method position() = position
-    method damage() = 25
-    method limiteADerecha() = self.position().x() > game.width() - 3
-    method limiteAIzquierda() = self.position().x() < 2
+//     method image() = "fireBall.png"
+//     method position() = position
+//     method damage() = 25
+//     method limiteADerecha() = self.position().x() > game.width() - 3
+//     method limiteAIzquierda() = self.position().x() < 2
 
-    method initialize() {
-        game.onTick(300, "fireBall", {self.trayectoria()})
-    }
-    method trayectoria() {
-        if(! self.limiteADerecha() )
-            self.moverDerecha()
-        else
-            game.removeVisual(self) 
+//     method initialize() {
+//         game.onTick(300, "fireBall", {self.trayectoria()})
+//     }
+//     method trayectoria() {
+//         if(! self.limiteADerecha() )
+//             self.moverDerecha()
+//         else
+//             game.removeVisual(self) 
 
-        if(! self.limiteAIzquierda())
-            self.moverIzquierda()
-        else {
-            game.removeVisual(self)
-        }
-    }
-     method moverDerecha() {
-        position = position.right(1)
-    }
-    method moverIzquierda() {
-        position = position.left(1)
-    }
-    method cambiarOrientacion() {
-        if (enemigoFinal.image() == "finalBossR.png")
-            direccion == 1
-        else 
-            direccion == 0
-    }
-    method colicionar(alguien){
-        alguien.recibirAtaque(self.damage())
-    }
-}
+//         if(! self.limiteAIzquierda())
+//             self.moverIzquierda()
+//         else {
+//             game.removeVisual(self)
+//         }
+//     }
+//      method moverDerecha() {
+//         position = position.right(1)
+//     }
+//     method moverIzquierda() {
+//         position = position.left(1)
+//     }
+//     method cambiarOrientacion() {
+//         if (enemigoFinal.image() == "finalBossR.png")
+//             direccion == 1
+//         else 
+//             direccion == 0
+//     }
+//     method colicionar(alguien){
+//         alguien.recibirAtaque(self.damage())
+//     }
+// }

@@ -442,9 +442,9 @@ import enemigos.*
 
 object nivelDesertico{
     const property velocidadDeEnemigos = 600
-    const property enemigos = [     new EnemigoComunDesierto(position = game.at(2.randomUpTo(9),1)),
-                                    new EnemigoComunDesierto(position = game.at(9.randomUpTo(15),1)),
-                                    new EnemigoComunDesierto(position = game.at(15.randomUpTo(23),1))]
+    const property enemigos = [     new EnemigoComunDesierto(position = game.at(7,1)),
+                                    new EnemigoComunDesierto(position = game.at(13,1)),
+                                    new EnemigoComunDesierto(position = game.at(18,1))]
     
     
     method suelo() = 1
@@ -460,8 +460,8 @@ object nivelDesertico{
 }
 object nivelHelado{
     const property velocidadDeEnemigos = 400
-    const property enemigos = [     new EnemigoComunHelado(position = game.at(17.randomUpTo(9),8)),
-                                    new EnemigoComunHelado(position = game.at(10.randomUpTo(7),8))]
+    const property enemigos = [     new EnemigoComunHelado(position = game.at(8,8)),
+                                    new EnemigoComunHelado(position = game.at(14,8))]
 
     method tipoDeEnemigo() = EnemigoComunHelado
     // method nuevoEnemigo() {new EnemigoComunHelado(position = game.at(5,7))}
@@ -471,12 +471,7 @@ object nivelHelado{
     method suelo() = 8
     method spawnearEnemigos() {enemigos.forEach({a => game.addVisual(a)})}
 }
-object nivelLunar{
-    const property velocidadDeEnemigos = 200
-    // const property enemigos = [     new EnemigoComunLunar(position = game.at(vida = 40,7.randomUpTo(12),15)),
-    //                                 new EnemigoComunLunar(position = game.at(12.randomUpTo(18),15)),
-    //                                 new EnemigoComunLunar(position = game.at(18.randomUpTo(24),15))]
-    
+object nivelLunar{  
     method tipoDeEnemigo() {}
     method nuevoEnemigo() {}
     method siguienteNivel() {}

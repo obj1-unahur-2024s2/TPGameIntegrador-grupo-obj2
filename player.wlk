@@ -22,7 +22,6 @@ object jugador {
 
     method pasarDeNivel(){
             nivelActual = nivelActual.siguienteNivel()
-            game.say(self,"Siguiente nivel! Preparado?")
     }
     method nivelActual() = nivelActual
     method estaEnUnaEscalera() = self.position().x() == nivelActual.positionXEscalera() and self.position().y() <= nivelActual.positionYMaximaEscalera()
@@ -46,7 +45,7 @@ object jugador {
     //getObjectIn()
     
     method comer(algo) {vida = 100.min(vida + algo.curacion())}
-    method sumarPuntos() {puntos += 1000}
+    method sumarPuntos(cantidad) {puntos += cantidad}
     method puntos() = puntos
 
 
@@ -59,7 +58,7 @@ object jugador {
             self.cambiarAImagenCorrectaAtaque()
         }
         else{
-            if(!game.getObjectsIn(position.left(2)).isEmpty() ){
+            if(!game.getObjectsIn(position.left(2)).isEmpty()){
                 const enemigo = game.getObjectsIn(position.left(2)).first()
                 enemigo.recibirAtaque()
             }
@@ -69,10 +68,11 @@ object jugador {
 
 
     method cambiarAImagenCorrectaAtaque(){
-        if(image == "jugadorL.png") 
+        if(lookAt == "left"){
             image = "jugadorAtaque1L.png" 
-        else 
+        }else{ 
             image = "jugadorAtaque1R.png"
+        }
         game.schedule(300, {if(image == "jugadorAtaque1L.png") image = "jugadorL.png" else image = "jugadorR.png"})
     }
 

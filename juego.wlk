@@ -4,36 +4,32 @@ import niveles.*
 import enemigos.*
 import objetosRandom.*
 object juego {
+    method pantallaInicial(){
+        game.width(37.33)
+        game.height(20.66)
+        game.boardGround("fondoDeInicio.png")
+        config.teclasDeInicio()
+    }
+
+
     method iniciar() {
         game.width(37.33)
         game.height(20.66)
         game.boardGround("escenario.png")
-        game.addVisual(stats)
-        // game.addVisual(puerta)
         game.addVisual(jugador)
-        game.addVisual(llave)
         game.addVisual(helado)
         game.addVisual(frutoEspacial)
         game.addVisual(oro)
         game.addVisual(enemigoFinal)
-        game.addVisual(new FireBall(direccion = enemigoFinal.direccionDeAtaque()))
-        //game.addVisual(new EnemigoComunDesierto(position = game.at(10, 1)))
-        // game.addVisual(new EnemigoComunHelado(position = game.at(5,1)))
-        // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
-        // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
-        // game.addVisual(new Moneda(position = game.at(0.randomUpTo(30), nivelHelado.suelo())))
+        game.addVisual(puntos)
+        game.addVisual(puntosDeVida)
         
         config.teclasDelJugador()
         config.colisionesDelJugador()
         nivelDesertico.spawnearEnemigos()
         nivelHelado.spawnearEnemigos()
-        // jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
-        // jugador.nivelActual().enemigos().forEach({a => game.addVisual(a)})
-        // enemigosHelados.forEach({a => game.addVisual(a)})
-        // enemigosLunares.forEach({a => game.addVisual(a)})
     }
     method terminar(){
-        // game.removeVisual(jugador)
         game.addVisual(cartelFinalizacion)
         game.stop()
     }
@@ -67,5 +63,8 @@ object config{
     }
     method musica(){
 
+    }
+    method teclasDeInicio(){
+        keyboard.enter().onPressDo({})
     }
 }
